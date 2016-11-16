@@ -11,29 +11,52 @@
 <body>
         
   <div>
-    {% for n in pl %}
+    {% for n in pl1 %}
     <div>{{n}}</div>
     {% endfor %}
   </div>
-    
-<form method="POST" action = "/post">
-<p>Basic information for searching:<br>
-    <label>Starting date <input type="date" name = "sdate"></label>
-    <label>Ending date <input type="date" name = "edate"></label><br>
-    <label>Price: from<input type="number" name = 'p1'> to <input type="number" name = 'p2'></label><br>
-    <label>Capacity from<input type="number" name = 'c1'>to<input type="number" name = 'c2'></label>
-    </p>
 
-<p>Basic information for posting: <br>
+<p><h>Apartments I'm interested in</h></p>
+<body>
+        
+  <div>
+    {% for n in pll %}
+    <div>{{n}}</div>
+    {% endfor %}
+  </div>
+
+<p><h>People interested in my apartments</h></p>
+<body>
+        
+  <div>
+    {% for n in plll %}
+    <div>{{n}}</div>
+    {% endfor %}
+  </div>
+
+
+<p><form method="POST" action = "/vd">
+    <label>LANDLORD ID:<input type = 'text' name = 'lid'></label>
+    <input type="submit" value="view potential landlord details">
+    </form>
+
+<p><form method="POST" action = "/vp">
+    <label>Pontential tenant ID:<input type = 'text' name = 'tid'></label>
+    <input type="submit" value="view potential tenant details">
+    </form>
+    
+<form method="POST" action = "/postnew">
+<p>Basic information for posting (All fields are required): <br>
     <label>Starting date <input type="date" name = "sdate1"></label>
     <label>Ending date <input type="date" name = "edate1"></label><br>
-    <label>Price: <input type = 'number' name = 'price'></label><br>
-    <label> capacity <input type = "number" name = "cap"></label><br>
-    <label> area <input type = 'number' name = 'area'></label>
+    <label>Apartment ID <input type="text" name = "aid"></label><br>
+    <label>Price: <input type = 'number' name = 'price' min = 0></label><br>
+    <label> capacity <input type = "number" name = "cap" step = 1 min = 1></label><br>
+    <label> area <input type = 'number' name = 'area' min = 0></label>
 <p>
     Address: <br>
 <label>Apartment No.<input type="text" name = "aptno"></label><br>     
-<label>Street No.<input type="number" name = "stno"></label><br> 
+<label>Street No.<input type="number" name = "stno" step = 1></label><br> 
 <label>Street Name<input type="text" name = "stna"></label><br> 
 Counties
 <select name="Counties">
@@ -44,14 +67,15 @@ Counties
     <option value="Long Island">Long Island</option>
     </select>
     <br> 
+Zipcode
 <label>Zipcode<input type="number" name = "zip"></label></p>
 
 <p>Number of: <br>
     
-<label>livingroom<input type="number" name = "l"></label> <br>     
-    <label>kitchen<input type="number" name = 'k'></label> <br>    
-<label>bathroom<input type="number" name = 'ba'></label> <br>    
-<label>bedroom<input type="number" name = 'be'></label></p>  
+<label>livingroom<input type="number" name = "l" step = 1 min = 0></label> <br>     
+    <label>kitchen<input type="number" name = 'k' step = 1 min = 0></label> <br>    
+<label>bathroom<input type="number" name = 'ba' step = 1 min = 0></label> <br>    
+<label>bedroom<input type="number" name = 'be' step = 1 min = 0></label></p>  
 
 <p>Amenities and furnishings: <br>
 gym
@@ -91,7 +115,6 @@ parking
 
 
 <p><input type="submit" value="post new apartment">
-    <input type = "submit" value = "search">
 </form>
     
 

@@ -1,9 +1,71 @@
-  <html>
-  <ul class="entries">
-  {% for entry in entries %}
-    <li><h2>{{ entry.title }}</h2>{{ entry.text|safe }}</li>
-  {% else %}
-    <li><em>Unbelievable.  No entries here so far</em></li>
-  {% endfor %}
-  </ul>
-  <html>
+<html>
+  <style>
+    body{ 
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+
+<body>
+  <h1>New York Apartment Rental</h1>
+
+  <div>
+    {% for n in data %}
+    <div>{{n}}</div>
+    {% endfor %}
+  </div>
+
+<p><a href="/another">Go to the other page</a></p>
+
+<form method="POST" action = "/search">
+<p>Basic information (must fill out every box!):<br>
+    <label>Starting date <input type="date" name = "sdate"></label>
+    <label>Ending date <input type="date" name = "edate"></label><br>
+    <label>Price: from<input type="number" name = 'p1'> to <input type="number" name = 'p2'></label><br>
+    <label>Capacity from<input type="number" name = 'c1'>to<input type="number" name = 'c2'></label>
+    </p>
+    
+<p>Address: <br>
+<label>Apartment No.<input type="text" name = "aptno"></label><br>     
+<label>Street No.<input type="number" name = "stno"></label><br> 
+<label>Street Name<input type="text" name = "stna"></label><br> 
+<label>Counties<input type="text" name = "counties"></label><br> 
+<label>Zipcode<input type="number" name = "zip"></label></p>
+
+<p>Number of: <br>
+    
+<label>livingroom<input type="number" name = "l"></label> <br>     
+    <label>kitchen<input type="number" name = 'k'></label> <br>    
+<label>bathroom<input type="number" name = 'ba'></label> <br>    
+<label>bedroom<input type="number" name = 'be'></label></p>  
+
+<p>Amenities and furnishings: <br>
+gym
+<select name="gym">
+  <option value="True">true</option>
+  <option value="False">false</option>
+</select><br>
+    
+ 
+<label>laundry<input type="text"></label> <br>    
+<label>parking<input type="text"></label> <br>    
+<label>heater<input type="text"></label> <br>    
+<label>AC<input type="text"></label></p>   
+   
+     
+
+
+<input type="submit" value="search">
+</form>
+    
+
+<form method="POST" action="/add">
+<p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>
+</form>
+
+
+</body>
+
+
+</html>
