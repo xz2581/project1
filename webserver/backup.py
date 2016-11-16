@@ -18,14 +18,11 @@ Read about it online.
 import os
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response, flash,url_for, session
+from flask import Flask, request, render_template, g, redirect, Response
 
 #tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder="/Users/xuchenzhou/project1/webserver/templates")
 app.config['DEBUG'] = True
-app.config['SESSION_TYPE'] = 'filesystem'
-app.secret_key = 'super secret key'
-
 
 DATABASEURI = "postgresql://xz2581:67qfr@104.196.175.120/postgres"
 engine = create_engine(DATABASEURI)
@@ -74,15 +71,7 @@ def teardown_request(exception):
 # see for decorators: http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/
 #
 apt = []
-pr = []
 results = []
-username = 'default'
-u = ''
-p = ''
-dummy1 = []
-dummy2 = []
-dummy3 = []
-
 @app.route('/')
 def index():
   """
@@ -94,54 +83,74 @@ def index():
 
   See its API: http://flask.pocoo.org/docs/0.10/api/#incoming-request-data
   """
+
+  # DEBUG: this is debugging code to see what request looks like
   print request.args
+
+  # Flask uses Jinja templates, which is an extension to HTML where you can
+  # pass data to a template and dynamically generate HTML based on the data
+  # (you can think of it as simple PHP)
+  # documentation: https://realpython.com/blog/python/primer-on-jinja-templating/
+  #
+  # You can see an example template in templates/index.html
+  #
+  # context are the variables that are passed to the template.
+  # for example, "data" key in the context variable defined below will be 
+  # accessible as a variable in index.html:
+  #
+  #     # will print: [u'grace hopper', u'alan turing', u'ada lovelace']
+  #     <div>{{data}}</div>
+  #     
+  #     # creates a <div> tag for each element in data
+  #     # will print: 
+  #     #
+  #     #   <div>grace hopper</div>
+  #     #   <div>alan turing</div>
+  #     #   <div>ada lovelace</div>
+  #     #
+  #     {% for n in data %}
+  #     <div>{{n}}</div>
+  #     {% endfor %}
+  #
   context = dict(data = apt)
-  if apt == []:
-    return render_template("index.html", **context)
-  else:
-    return render_template("index2.html", **context)
 
+
+  #
+  # render_template looks in the templates/ folder for files.
+  # for example, the below file reads template/index.html
+  #
+  return render_template("index.html", **context)
+
+#
+# This is an addressa different path.  You can see it at
+# 
+#     localhost:8111/another
+#
+# notice that the functio name is another() rather than index()
+# the functions for each app.route needs to have different names
+#
 @app.route('/searcherror')
-def searcherror():
+def another():
   return render_template("searcherror.html")
-
-
-
-@app.route('/profile', methods = ['POST','GET'])
-def profile():
-  global username
-  username = u.encode('ascii')
-  cmd = ("Select * from Apartment_owned_is_at_and_has_type as A, has as B where A.uid = B.uid and A.uid = :u1")
-  cur = g.conn.execute(text(cmd),u1 = username)
-  
-  global pr
-  for record in cur:
-    if record not in pr:
-      pr.append(record)
-  cur.close()
-  
-  #print pr
-  
-  bla = []
-  context = dict(pl = pr)
-  print context
-  return render_template("profile.html",**context)
 
 @app.route('/searchresult')
 def searchresult():
   context = dict(data = results)
+  #print data
   return render_template("searchresult.html",**context)
 
-#@app.route('/post')
-#def afterpost():
-  #context = dict(data = pr)
-  #return reunder_template("profile.html", **context)
-
-# Searching for apartments
+# addressadding new data to the database
+@app.route('/add', methods=['POST'])
+def add():
+  name = request.form['name']
+  #print name
+  cmd = 'INSERT INTO test(name) VALUES (:name1)';
+  g.conn.execute(text(cmd), name1 = name);
+  return redirect('/')
 
 @app.route('/search',methods=['POST'])
 def search():
-  apt = []
+  
   sdate = request.form['sdate']
   edate = request.form['edate']
   p1 = request.form['p1']
@@ -176,7 +185,6 @@ def search():
   tyl = [l,k,be,ba]
   afl = [gym,laundry,parking,heater,ac]
   
-  
   for i in afl:
     if i == "true":
       i = True
@@ -189,9 +197,9 @@ def search():
              "streetname":[stna,'c'], "counties": [counties, 'd'],
              "zipcode": [zipcode,'e']} 
   tyd = {"numlivingroom":[l,'f'], "numkitchen": [k,'g'], 
-         "numbathroom":[ba,'h'], "numbedroom":[be,'i']}
-  afd = {"gym":[gym,'j'],"laundry":[laundry,'k'],"parking":[parking,'l'],
-         "heater":[heater,'m'],"ac":[ac,'n']}
+         "numbathroom":[ba,'g'], "numbedroom":[be,'h']}
+  afd = {"gym":[gym,'i'],"laundry":[laundry,'j'],"parking":[parking,'k'],
+         "heater":[heater,'l'],"ac":[ac,'m']}
   
   
   
@@ -233,55 +241,21 @@ def search():
 
   cursor = g.conn.execute(text(cmd), paramdict)
   entries = cursor.fetchall()
+  #print entries
   cursor.close()
   
-
-  global results
-  results = []
-    
   for record in entries:
     if record not in results:
       results.append(record)
-  
+  cursor.close()
   return redirect('/searchresult')
     
   
-#Post new Apartments
-app.route('/post',methods = ['POST'])
-def post():
-  return render_template("/searcherror.html")
-
-#Login
-@app.route('/login', methods=['GET', 'POST'])
+  
+@app.route('/login')
 def login():
-    error = None
-    if request.method == 'POST':
-      global u,p
-      u = request.form.get('username')
-      p = request.form.get('password')
-      cmd = "Select Count(uid) from users where uid = :u1"
-      cur = g.conn.execute(text(cmd),{'u1':u})
-      for result in cur:
-        count = result[0]
-      #cur.close()
-      if count == 0:
-            error = 'Invalid username!'
-      elif count > 0:
-        cmd+=" and pwd = md5(:p1)"
-        cur = g.conn.execute(text(cmd),{'u1':u,'p1':p})
-        for result in cur:
-          count = result[0]
-          
-        if count == 0:
-          error = 'Invalid password'
-        else:
-          #print "Im here"
-          session['logged_in'] = True
-          #print "Im here"
-          apt.append( "You are logged in!")
-          return redirect('/')
-    return render_template('login.html', error=error)
-
+    abort(401)
+    this_is_never_executed()
 
 
 if __name__ == "__main__":

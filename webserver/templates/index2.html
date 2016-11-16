@@ -1,0 +1,168 @@
+<html>
+  <style>
+    body{ 
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+
+<body>
+  <h1>New York Apartment Rental</h1>
+  <div>
+    {% for n in data %}
+    <div>{{n}}</div>
+    {% endfor %}
+  </div>
+    
+<form method="POST" action = "/profile">
+    <input type="submit" value="view my profile">
+    </form>
+
+    
+<form method="POST" action = "/post">
+<p>Basic information for searching:<br>
+    <label>Starting date <input type="date" name = "sdate"></label>
+    <label>Ending date <input type="date" name = "edate"></label><br>
+    <label>Price: from<input type="number" name = 'p1'> to <input type="number" name = 'p2'></label><br>
+    <label>Capacity from<input type="number" name = 'c1'>to<input type="number" name = 'c2'></label>
+    </p>
+
+<p>Basic information for posting: <br>
+    <label>Starting date <input type="date" name = "sdate1"></label>
+    <label>Ending date <input type="date" name = "edate1"></label><br>
+    <label>Price: <input type = 'number' name = 'price'></label><br>
+    <label> capacity <input type = "number" name = "cap"></label><br>
+    <label> area <input type = 'number' name = 'area'></label>
+<p>
+    Address: <br>
+<label>Apartment No.<input type="text" name = "aptno"></label><br>     
+<label>Street No.<input type="number" name = "stno"></label><br> 
+<label>Street Name<input type="text" name = "stna"></label><br> 
+Counties
+<select name="Counties">
+    <option value="Manhattan">Manhattan</option>
+    <option value="Queens">Queens</option>
+    <option value="Brooklyn">Brooklyn</option>
+    <option value="Bronx">Bronx</option>
+    <option value="Long Island">Long Island</option>
+    </select>
+    <br> 
+<label>Zipcode<input type="number" name = "zip"></label></p>
+
+<p>Number of: <br>
+    
+<label>livingroom<input type="number" name = "l"></label> <br>     
+    <label>kitchen<input type="number" name = 'k'></label> <br>    
+<label>bathroom<input type="number" name = 'ba'></label> <br>    
+<label>bedroom<input type="number" name = 'be'></label></p>  
+
+<p>Amenities and furnishings: <br>
+gym
+<select name="gym">
+    <option value="None">None</option>
+    <option value="True">true</option>
+    <option value="False">false</option>
+</select><br>
+    
+laundry
+<select name="laundry">
+    <option value="None">None</option>
+    <option value="True">true</option>
+    <option value="False">false</option>
+</select><br>    
+heater
+<select name="heater">
+    <option value="None">None</option>
+    <option value="True">true</option>
+    <option value="False">false</option>
+</select><br>   
+AC
+<select name="AC">
+    <option value="None">None</option>
+    <option value="True">true</option>
+    <option value="False">false</option>
+</select><br> 
+
+parking
+<select name="parking">
+    <option value="None">None</option>
+    <option value="True">true</option>
+    <option value="False">false</option>
+</select><br> 
+   
+     
+
+<input type = "submit" value = "search">
+</form>
+<form>   
+<p>Basic information for posting: <br>
+    <label>Starting date <input type="date" name = "sdate1"></label>
+    <label>Ending date <input type="date" name = "edate1"></label><br>
+    <label>Price: <input type = 'number' name = 'price'></label><br>
+    <label> capacity <input type = "number" name = "cap"></label><br>
+    <label> area <input type = 'number' name = 'area'></label>
+<p>
+    Address: <br>
+<label>Apartment No.<input type="text" name = "aptno"></label><br>     
+<label>Street No.<input type="number" name = "stno"></label><br> 
+<label>Street Name<input type="text" name = "stna"></label><br> 
+Counties
+<select name="Counties">
+    <option value="Manhattan">Manhattan</option>
+    <option value="Queens">Queens</option>
+    <option value="Brooklyn">Brooklyn</option>
+    <option value="Bronx">Bronx</option>
+    <option value="Long Island">Long Island</option>
+    </select>
+    <br> 
+<label>Zipcode<input type="number" name = "zip"></label></p>
+
+<p>Number of: <br>
+    
+<label>livingroom<input type="number" name = "l"></label> <br>     
+    <label>kitchen<input type="number" name = 'k'></label> <br>    
+<label>bathroom<input type="number" name = 'ba'></label> <br>    
+<label>bedroom<input type="number" name = 'be'></label></p>  
+
+<p>Amenities and furnishings: <br>
+gym
+<select name="gym">
+    <option value="None">None</option>
+    <option value="True">true</option>
+    <option value="False">false</option>
+</select><br>
+    
+laundry
+<select name="laundry">
+    <option value="None">None</option>
+    <option value="True">true</option>
+    <option value="False">false</option>
+</select><br>    
+heater
+<select name="heater">
+    <option value="None">None</option>
+    <option value="True">true</option>
+    <option value="False">false</option>
+</select><br>   
+AC
+<select name="AC">
+    <option value="None">None</option>
+    <option value="True">true</option>
+    <option value="False">false</option>
+</select><br> 
+
+parking
+<select name="parking">
+    <option value="None">None</option>
+    <option value="True">true</option>
+    <option value="False">false</option>
+</select><br> 
+<p><input type="submit" value="post new apartment">
+</form>
+
+
+</body>
+
+
+</html>

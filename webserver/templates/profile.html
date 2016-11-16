@@ -7,36 +7,31 @@
   </style>
 
 
+<p><h>My Apartments</h></p>
 <body>
-  <h1>New York Apartment Rental</h1>
+        
   <div>
-    {% for n in data %}
+    {% for n in pl %}
     <div>{{n}}</div>
     {% endfor %}
   </div>
     
-
-<h2>Login</h2>
-{% if error %}<p class="error"><strong>Error:</strong> {{ error }}{% endif %}
-<form action="{{ url_for('login') }}" method="post">
-<dl>
-<dt>Username:
-<dd><input type="text" name="username">
-<dt>Password:
-<dd><input type="password" name="password">
-<dd><input type="submit" value="Login">
-</dl>
-</form>
-    
-<form method="POST" action = "/search">
-<p>Basic information (must fill out every box!):<br>
+<form method="POST" action = "/post">
+<p>Basic information for searching:<br>
     <label>Starting date <input type="date" name = "sdate"></label>
     <label>Ending date <input type="date" name = "edate"></label><br>
     <label>Price: from<input type="number" name = 'p1'> to <input type="number" name = 'p2'></label><br>
     <label>Capacity from<input type="number" name = 'c1'>to<input type="number" name = 'c2'></label>
     </p>
-    
-<p>Address: <br>
+
+<p>Basic information for posting: <br>
+    <label>Starting date <input type="date" name = "sdate1"></label>
+    <label>Ending date <input type="date" name = "edate1"></label><br>
+    <label>Price: <input type = 'number' name = 'price'></label><br>
+    <label> capacity <input type = "number" name = "cap"></label><br>
+    <label> area <input type = 'number' name = 'area'></label>
+<p>
+    Address: <br>
 <label>Apartment No.<input type="text" name = "aptno"></label><br>     
 <label>Street No.<input type="number" name = "stno"></label><br> 
 <label>Street Name<input type="text" name = "stna"></label><br> 
@@ -95,13 +90,11 @@ parking
      
 
 
-<input type="submit" value="search">
+<p><input type="submit" value="post new apartment">
+    <input type = "submit" value = "search">
 </form>
     
 
-<form method="POST" action="/add">
-<p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>
-</form>
 
 
 </body>
