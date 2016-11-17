@@ -8,12 +8,29 @@
 
 
 <body>
-  <h1>Pontential landlords</h1>
-  <div>
-    {% for n in bla %}
-    <div>{{n}}</div>
-    {% endfor %}
-  </div>
+  <h1>Pontential Landlord Details</h1>
+<table border="1">
+<tr>
+    <th>Potential Landlord ID</th>
+    <th>Gender</th>
+    <th>Birthyear</th>
+    <th>Occupation</th> 
+    <th>email address</th>
+    <th>rating</th>
+    <th>lifestyle required</th>
+    </tr>
+{%for i in range(uid|length)%}
+<tr>
+<td>{{uid[i]}}</td>   
+<td>{{gender[i]}}</td>
+<td>{{birthyear[i]}}</td>
+<td>{{occupation[i]}}</td>
+<td>{{emailaddress[i]}}</td>
+<td>{{rating[i]}}</td>
+<td>{{lifestylerequired[i]}}</td>
+</tr>
+{%endfor%}
+    </table><br>
 
 
 </body>

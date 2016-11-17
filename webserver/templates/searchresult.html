@@ -6,22 +6,77 @@
     }
   </style>
 
-
 <body>
-  <h1>New York Apartment Rental</h1>
+<p><h><b>Search Results</b></h>
+<body>
+<table border="1">
+<tr>
+    <th>User ID</th>
+    <th>Apt. ID</th>
+    <th>Area(m<sup>2</sup>)</th>
+    <th>Capacity</th> 
+    <th>Price</th>
+    <th>Availability</th>
+    <th>Address</th>
+</tr>
+{%for i in range(userid|length)%}
+<tr>
+<td>{{userid[i]}}</td>
+<td>{{aptid[i]}}</td>
+<td>{{area[i]}}</td>
+<td>{{capacity[i]}}</td>
+<td>{{price[i]}}</td>
+<td>{{aval[i]}}</td>   
+<td>{{add[i]}}</td>     
+</tr>
+{%endfor%}
+    </table><br>
 
-  <div>
-    {% for n in data %}
-    <div>{{n}}</div>
-    {% endfor %}
-  </div>
-<p><form method="POST" action = "/interest">
-    <label>My ID:<input type = 'text' name = 'tid'></label>
-    <label>Landlord ID:<input type = 'text' name = 'lid'></label>
-    <label>Apartment ID:<input type = 'text' name = 'aid'></label>
-    <label>My life style: <input type = "text" name = 'lifestyle'></label>
-    <input type="submit" value="add to interested list">
+<table border="1">
+    <colgroup span = "4"></colgroup>
+    <colgroup span = "5"></colgroup>
+    <tr>
+    <th colspan = '4' scope="colgroup">Apartment Type</th>
+    <th colspan = '5' scope="colgroup">Amenities and Furnishings</th>
+    </tr>
+    <tr>
+    <th scope="col">#livingroom</th>
+    <th scope="col">#kitchen</th>
+    <th scope="col">#bathroom</th>
+    <th scope="col">#bedroom</th>
+    <th scope="col">Gym</th>
+    <th scope="col">Laundry</th>
+    <th scope="col">Parking</th>
+    <th scope="col">Heater</th>
+    <th scope="col">AC</th>
+    </tr>
+{%for i in range(userid|length)%}
+<tr>     
+<td>{{nl[i]}}</td> 
+<td>{{nk[i]}}</td> 
+<td>{{nba[i]}}</td> 
+<td>{{nbe[i]}}</td> 
+<td>{{gym[i]}}</td>
+<td>{{laundry[i]}}</td> 
+<td>{{parking[i]}}</td> 
+<td>{{heater[i]}}</td> 
+<td>{{ac[i]}}</td> 
+</tr>
+{%endfor%}
+    </table><br><br></body></p>
+
+<form method="POST" action = "/interest">
+<p>Basic information for searching:<br>
+    <label>Landlord ID <input type = 'text' name = lid></label><br>
+    <label>Apt. ID <input type = 'text' name = aid></label><br>
+    <label>My lifestyle <input type = 'text' name = lifestyle></label><br>
+    <br>Lifestyle will only update if you haven't filled it out originally!<br>
+    <label><input type = 'submit' value = "I am Interested!"></label>
+    </p>
     </form>
-</body>
     
+
+</body>
+
+
 </html>

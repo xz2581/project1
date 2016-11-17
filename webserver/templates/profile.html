@@ -7,43 +7,159 @@
   </style>
 
 
-<p><h>My Apartments</h></p>
+<p><h><b>My Apartments</b></h>
 <body>
-        
-  <div>
-    {% for n in pl1 %}
-    <div>{{n}}</div>
-    {% endfor %}
-  </div>
+<table border="1">
+<tr>
+    <th>User ID</th>
+    <th>Apt. ID</th>
+    <th>Area(m<sup>2</sup>)</th>
+    <th>Capacity</th> 
+    <th>Price</th>
+    <th>Availability</th>
+    <th>Address</th>
+</tr>
+{%for i in range(userid|length)%}
+<tr>
+<td>{{userid[i]}}</td>
+<td>{{aptid[i]}}</td>
+<td>{{area[i]}}</td>
+<td>{{capacity[i]}}</td>
+<td>{{price[i]}}</td>
+<td>{{aval[i]}}</td>   
+<td>{{add[i]}}</td>     
+</tr>
+{%endfor%}
+    </table><br>
 
-<p><h>Apartments I'm interested in</h></p>
-<body>
-        
-  <div>
-    {% for n in pll %}
-    <div>{{n}}</div>
-    {% endfor %}
-  </div>
+<table border="1">
+    <colgroup span = "4"></colgroup>
+    <colgroup span = "5"></colgroup>
+    <tr>
+    <th colspan = '4' scope="colgroup">Apartment Type</th>
+    <th colspan = '5' scope="colgroup">Amenities and Furnishings</th>
+    </tr>
+    <tr>
+    <th scope="col">#livingroom</th>
+    <th scope="col">#kitchen</th>
+    <th scope="col">#bathroom</th>
+    <th scope="col">#bedroom</th>
+    <th scope="col">Gym</th>
+    <th scope="col">Laundry</th>
+    <th scope="col">Parking</th>
+    <th scope="col">Heater</th>
+    <th scope="col">AC</th>
+    </tr>
+{%for i in range(userid|length)%}
+<tr>     
+<td>{{nl[i]}}</td> 
+<td>{{nk[i]}}</td> 
+<td>{{nba[i]}}</td> 
+<td>{{nbe[i]}}</td> 
+<td>{{gym[i]}}</td>
+<td>{{laundry[i]}}</td> 
+<td>{{parking[i]}}</td> 
+<td>{{heater[i]}}</td> 
+<td>{{ac[i]}}</td> 
+</tr>
+{%endfor%}
+    </table><br><br></body></p>
+    
+<form method="POST" action = "/delete">
+    <label>Apartment ID <input type = 'text' name = aid></label>
+    <label><input type = 'submit' value = "delete this apartment!"></label>
+    </form>
+    
+<h><b>Apartments I'm interested in</b></h>
+<table border="1">
+<tr>
+    <th>Landlord ID</th>
+    <th>Apt. ID</th>
+    <th>Area(m<sup>2</sup>)</th>
+    <th>Capacity</th> 
+    <th>Price</th>
+    <th>Availability</th>
+    <th>Address</th>
+</tr>
+{%for i in range(userid1|length)%}
+<tr>
+<td>{{userid1[i]}}</td>
+<td>{{aptid1[i]}}</td>
+<td>{{area1[i]}}</td>
+<td>{{capacity1[i]}}</td>
+<td>{{price1[i]}}</td>
+<td>{{aval1[i]}}</td>   
+<td>{{add1[i]}}</td>     
+</tr>
+{%endfor%}
+    </table><br>
+<table border="1">
+    <colgroup span = "4"></colgroup>
+    <colgroup span = "5"></colgroup>
+    <tr>
+    <th colspan = '4' scope="colgroup">Apartment Type</th>
+    <th colspan = '5' scope="colgroup">Amenities and Furnishings</th>
+    </tr>
+    <tr>
+    <th scope="col">#livingroom</th>
+    <th scope="col">#kitchen</th>
+    <th scope="col">#bathroom</th>
+    <th scope="col">#bedroom</th>
+    <th scope="col">Gym</th>
+    <th scope="col">Laundry</th>
+    <th scope="col">Parking</th>
+    <th scope="col">Heater</th>
+    <th scope="col">AC</th>
+    </tr>
+{%for i in range(userid|length)%}
+<tr>     
+<td>{{nl1[i]}}</td> 
+<td>{{nk1[i]}}</td> 
+<td>{{nba1[i]}}</td> 
+<td>{{nbe1[i]}}</td> 
+<td>{{gym1[i]}}</td>
+<td>{{laundry1[i]}}</td> 
+<td>{{parking1[i]}}</td> 
+<td>{{heater1[i]}}</td> 
+<td>{{ac1[i]}}</td> 
+</tr>
+{%endfor%}
+    </table><br><br>
 
-<p><h>People interested in my apartments</h></p>
-<body>
-        
-  <div>
-    {% for n in plll %}
-    <div>{{n}}</div>
-    {% endfor %}
-  </div>
-
-
-<p><form method="POST" action = "/vd">
+<form method="POST" action = "/getlandlord">
     <label>LANDLORD ID:<input type = 'text' name = 'lid'></label>
     <input type="submit" value="view potential landlord details">
-    </form>
+    </form><br><br>
+    
+<p><h><b>People interested in my apartments</b></h></p>
 
-<p><form method="POST" action = "/vp">
-    <label>Pontential tenant ID:<input type = 'text' name = 'tid'></label>
-    <input type="submit" value="view potential tenant details">
-    </form>
+<table border="1">
+<tr>
+    <th>Potential tenant ID</th>
+    <th>Gender</th>
+    <th>Birthyear</th>
+    <th>Occupation</th> 
+    <th>email address</th>
+    <th>rating</th>
+    <th>lifestyle</th>
+    </tr>
+{%for i in range(uid|length)%}
+<tr>
+<td>{{uid[i]}}</td>   
+<td>{{gender[i]}}</td>
+<td>{{birthyear[i]}}</td>
+<td>{{occupation[i]}}</td>
+<td>{{emailaddress[i]}}</td>
+<td>{{rating[i]}}</td>
+<td>{{lifestyle[i]}}</td>
+</tr>
+{%endfor%}
+    </table><br>
+        
+
+
+
+
     
 <form method="POST" action = "/postnew">
 <p>Basic information for posting (All fields are required): <br>
@@ -67,7 +183,7 @@ Counties
     <option value="Long Island">Long Island</option>
     </select>
     <br> 
-Zipcode
+
 <label>Zipcode<input type="number" name = "zip"></label></p>
 
 <p>Number of: <br>
@@ -110,7 +226,9 @@ parking
     <option value="True">true</option>
     <option value="False">false</option>
 </select><br> 
-   
+
+Extra Info:
+<label>Life style required<input type = "text" name = "lsr"></label>
      
 
 
