@@ -21,7 +21,7 @@ from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, Response, flash,url_for, session
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
-app = Flask(__name__, template_folder=tmpl_dir)
+app = Flask(__name__, template_folder=templ_dir)
 app.config['DEBUG'] = True
 app.config['SESSION_TYPE'] = 'filesystem'
 app.secret_key = 'super secret key'
@@ -60,19 +60,6 @@ def teardown_request(exception):
     pass
 
 
-#
-# @app.route is a decorator around index() that means:
-#   run index() whenever the user tries to access the "/" path using a GET request
-#
-# If you wanted the user to go to e.g., localhost:8111/foobar/ with POST or GET then you could use
-#
-#       @app.route("/foobar/", methods=["POST", "GET"])
-#
-# PROTIP: (the trailing / in the path is important)
-# 
-# see for routing: http://flask.pocoo.org/docs/0.10/quickstart/#routing
-# see for decorators: http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/
-#
 apt = []
 pr = []
 interests = []
@@ -83,22 +70,9 @@ username = 'default'
 u = ''
 p = ''
 users = []
-#dummy1 = []
-#dummy2 = []
-#dummy3 = []
 
 @app.route('/')
 def index():
-  """
-  request is a special object that Flask provides to access web request information:
-
-  request.method:   "GET" or "POST"
-  request.form:     if the browser submitted a form, this contains the data in the form
-  request.args:     dictionary of URL arguments e.g., {a:1, b:2} for http://localhost?a=1&b=2
-
-  See its API: http://flask.pocoo.org/docs/0.10/api/#incoming-request-data
-  """
-  print request.args
   context = dict(data = apt)
   if apt == []:
     return render_template("index.html", **context)
@@ -110,57 +84,151 @@ def searcherror():
   return render_template("searcherror.html")
 
 
+def get_apt(cur):
+  
+  result = []
+  for i in range(23):
+    result.append([])
+    
+  for record in cur:
+    for i in range(23):
+      if (i>=18):
+        if record[i] == True:
+          result[i].append("Yes")
+        else:
+          result[i].append("No")
+      else:
+        result[i].append(record[i])    
+  cur.close()  
+  
+  num = len(result[0])
+  availability = []
+  address = []
+  for i in range(num):
+    availability.append(str(result[5][i]) + " to " + str(result[6][i]))
+  
+  for i in range(num):
+    address.append(str(result[8][i]) + " " + str(result[9][i]) + " # " 
+                   + str(result[3][i]) + ", " + str(result[10][i]) + ", "
+                   + result[11][i])
+  
+    userid = []
+    aptid = []
+    area = []
+    price = []
+    capacity = []
+    aval = []
+    nl = []
+    nk = []
+    nba = []
+    nbe = []
+    add = []
+    gym = []
+    laundry = []
+    parking = []
+    heater = []
+    ac = []  
 
+  userid = result[0]
+  aptid = result[1]
+  area = result[2]
+  price = result[7]
+  capacity = result[4]
+  aval = availability
+  nl = result[12]
+  nk = result[13]
+  nba = result[14] 
+  nbe = result[15]
+  add = address
+  gym = result[18]
+  laundry = result[19]
+  parking = result[20] 
+  heater = result[21]
+  ac = result[22]
+  
+  return userid, aptid, area, price, capacity, aval, nl, nk, nba, nbe, add, gym, laundry, parking, heater, ac, address
+  
+
+def get_user(cur):
+  result = []
+  for i in range(7):
+    result.append([])
+    
+  for record in cur:
+    for i in range(7):
+      if record[i] not in result[i]:
+        result[i].append(record[i])    
+  cur.close() 
+  uid = result[0]
+  birthyear = result[1]
+  occupation = result[2]
+  gender = result[3]
+  emailaddress = result[4]
+  rating = result[5]
+  lifestyle = result[6]
+  
+  return uid,birthyear,occupation,gender,emailaddress,rating,lifestyle
+    
 @app.route('/profile', methods = ['POST','GET'])
 def profile():
   global username
   username = u.encode('ascii')
-  cmd1 = ("Select * from Apartment_owned_is_at_and_has_type as A, has as B where A.uid = B.uid and A.uid = :u1")
-  cur1 = g.conn.execute(text(cmd1),u1 = username)
+  cmd1 = ("Select * from Apartment_owned_is_at_and_has_type as A INNER JOIN" 
+          +" has as B on (A.uid = B.uid and A.uid = :u)")
+  cur1 = g.conn.execute(text(cmd1), u= username)
   
-  global pr
-  for record in cur1:
-    if record not in pr:
-      pr.append(record)
-  cur1.close()
+  userid, aptid, area, price, capacity, aval, nl, nk, nba, nbe, add, gym, laundry, parking, heater, ac, address = get_apt(cur1)
+  #print userid
+
+  cmd2 = ("Select A.uid,A.aid, area, apt_num, capacity, start_date, end_date," 
+          +"price, streetnum, streetname, counties, zipcode, numlivingroom, " 
+          +"numkitchen, numbathroom, numbedroom, C.uid, C.aid, C.gym," 
+          +"C.laundry, C.parking, C.heater, C.ac from Apartment_owned_is_at_and_has_type" 
+          +" as A INNER JOIN has as C on (A.uid = C.uid and A.aid = C.aid) " 
+          +"INNER JOIN has_interest_in as B on (A.uid = B.lid and " 
+          + "A.aid = B.aid and B.tid = :u)")
+  cur2 = g.conn.execute(text(cmd2), u = username)
+  userid1, aptid1, area1, price1, capacity1, aval1, nl1, nk1, nba1, nbe1, add1, gym1, laundry1, parking1, heater1, ac1, address1 = get_apt(cur2)
+
   
-  cmd2 = ("Select A.aid, A.uid, A.price from Apartment_owned_is_at_and_has_type as A INNER"
-          + " JOIN has_interest_in as B on (A.uid = B.lid and A.aid = B.aid and B.tid = :u)")
-  cur2 = g.conn.execute(text(cmd2),u = username)
-  
-  global interests
-  for record in cur2:
-    if record not in interests:
-      interests.append(record)
-  cur2.close()
-  
-  cmd3 = ("Select b.tid from Apartment_owned_is_at_and_has_type as A INNER"
-          + " JOIN has_interest_in as B on (A.uid = B.lid and A.aid = B.aid and A.uid = :u)")
+  cmd3 = ("Select b.tid, birthyear, occupation, gender, emailaddress,"
+          +" t.trating, t.life_style from Apartment_owned_is_at_and_has_type"
+          +" as A INNER JOIN has_interest_in as B on (A.uid = B.lid and A.aid = B.aid" 
+          +" and A.uid = :u) INNER JOIN potential_tenant as t on (b.tid = t." 
+          +"uid) INNER join users as u on (b.tid = u.uid)")
   cur3 = g.conn.execute(text(cmd3),u=username)
   
-  global people
-  for record in cur3:
-    if record not in people:
-      people.append(record)
+  uid,birthyear,occupation,gender,emailaddress,rating,lifestyle = get_user(cur3)
+  #global people
+  #for record in cur3:
+    #if record not in people:
+      #people.append(record)
   
-  context = dict(pl1 = pr, pll = interests, plll = people)
-  print context
+  
+  context = dict(userid = userid, aptid = aptid, area = area, price = price,
+                 capacity = capacity, aval = aval, nl = nl, nk = nk, nba = nba, 
+                 nbe = nbe, add = address, gym = gym, laundry = laundry, 
+                 parking = parking, pll = interests, heater = heater, ac = ac, 
+                 userid1 = userid1, aptid1 = aptid1, area1 = area1, 
+                 price1 = price1,capacity1 = capacity1, aval1 = aval1,
+                 nl1 = nl1, nk1 = nk1, nba1 = nba1,nbe1 = nbe1, add1 = address1, 
+                 gym1 = gym1, laundry1 = laundry1, parking1 = parking1,
+                 heater1 = heater1, ac1 = ac1, uid = uid, gender = gender,
+                 birthyear = birthyear, occupation = occupation, 
+                 emailaddress = emailaddress, rating = rating, 
+                 lifestyle = lifestyle)  
+  
   return render_template("profile.html",**context)
 
-@app.route('/searchresult')
-def searchresult():
-  context = dict(data = results)
-  return render_template("searchresult.html",**context)
 
-#@app.route('/post')
-#def afterpost():
-  #context = dict(data = pr)
-  #return reunder_template("profile.html", **context)
-
-# Searching for apartments
+@app.route('/wronguser')
+def wronguser():
+  return render_template("wronguser.html")
 
 @app.route('/search',methods=['POST'])
 def search():
+  
+  #input setup
   apt = []
   sdate = request.form['sdate']
   edate = request.form['edate']
@@ -180,8 +248,8 @@ def search():
   stna = request.form.get('stna')
   counties = request.form.get('Counties')
   zipcode = request.form.get('zip')
-  l = request.form.get('l')
   
+  l = request.form.get('l')
   k = request.form.get('k')
   be = request.form.get('be')
   ba = request.form.get('ba')
@@ -198,13 +266,13 @@ def search():
   
   
   for i in afl:
-    if i == "true":
+    if i == "Yes":
       i = True
-    elif i == "false":
+    elif i == "No":
       i = False
   
   
-  
+  #paramdict setup
   address = {"apt_num":[aptno, 'a'], "streetnum":[stno, 'b'],
              "streetname":[stna,'c'], "counties": [counties, 'd'],
              "zipcode": [zipcode,'e']} 
@@ -212,63 +280,60 @@ def search():
          "numbathroom":[ba,'h'], "numbedroom":[be,'i']}
   afd = {"gym":[gym,'j'],"laundry":[laundry,'k'],"parking":[parking,'l'],
          "heater":[heater,'m'],"ac":[ac,'n']}
-  
-  
-  
-
   paramdict = {'x':p1, 'y':p2, 'sd':sdate, 'ed':edate,'sc':c1, 'ec':c2}
-  cmd = ("SELECT * from Apartment_owned_is_at_and_has_type" +
-          " where Apartment_owned_is_at_and_has_type.price between :x AND :y" 
+  
+  #Initialize query
+  cmd = ("SELECT * from Apartment_owned_is_at_and_has_type as A, has as B" +
+          " where A.aid = B.aid and A.uid = B.uid and"
+          +" price between :x AND :y" 
           + " AND start_date >= :sd and end_date <= :ed" 
           + " and capacity between :sc AND :ec")
   
-  if all(x == '' for x in addl) == False:
+  #If address is filled out
+  if not all(x == '' for x in addl):
     #print "Hi first checkpoint"
     for i in address.keys():
-      if address[i][0] != '':
+      if address[i][0] != '' and address[i][0] != "None":
         if type(i.encode('ascii') == str):
           cmd += " and " + 'upper(' + i + ") = upper(:" + address[i][1] + ')'
         else:
           cmd += " and " + i + "= :" + address[i][1] 
         paramdict[address[i][1]]=address[i][0]
   
-  if all(x == '' for x in tyl) == False:
-    print "Hi second checkpoint"
-    print cmd
+  #If type is filled out
+  if not all(x == '' for x in tyl):
     for i in tyd.keys():
       if tyd[i][0] != '':
           cmd += " and " + i + "= :" + tyd[i][1] 
           print "Hi again!"
-          paramdict[tyd[i][1]]=tyd[i][0]  
-  
-  if all(x== "None" for x in afl) == False:
-    #print "Ugh i'm here"
-    cmd = "Select * from (" + cmd + ") as A, has as B where A.aid = B.aid and A.uid = B.uid "
+          paramdict[tyd[i][1]]=tyd[i][0]
+
+  #If amenities and firnishings is filled out
+  if not all(x== "None" for x in afl):
     for i in afd.keys():
       if afd[i][0] != "None":
         cmd += " and B." + i + "= :" + afd[i][1]
         paramdict[afd[i][1]]=afd[i][0]
         
+  cur = g.conn.execute(text(cmd), paramdict)
+  userid, aptid, area, price, capacity, aval, nl, nk, nba, nbe, add, gym, laundry, parking, heater, ac, address = get_apt(cur)
   
+  context = dict(userid = userid, aptid = aptid, area = area, price = price,
+                 capacity = capacity, aval = aval, nl = nl, nk = nk, nba = nba, 
+                 nbe = nbe, add = address, gym = gym, laundry = laundry, 
+                 parking = parking, heater = heater, ac = ac)  
 
-  cursor = g.conn.execute(text(cmd), paramdict)
-  entries = cursor.fetchall()
-  cursor.close()
-  
+  return render_template("searchresult.html", **context)
 
-  global results
-  results = []
-    
-  for record in entries:
-    if record not in results:
-      results.append(record)
-  
-  return redirect('/searchresult')
-    
-#def check_int(num):
-  #return float(num) != int(num)
+# Return boolean value of an input from the form
+def get_bool(a):
+  if a == 'true':
+    a = True
+  else:
+    a = False
+  return a
 
-#Post new Apartments
+
 @app.route('/postnew',methods = ['POST'])
 def postnew():
   uid = username
@@ -300,7 +365,17 @@ def postnew():
   gym = request.form.get('gym').encode('ascii')
   heater = request.form.get('heater').encode('ascii')
   ac = request.form.get('AC').encode('ascii')
+  
+  parking = get_bool(parking)
+  laundry = get_bool(laundry)
+  gym = get_bool(gym)
+  heater = get_bool(heater)
+  ac = get_bool(ac)
+  
+  lsr = request.form.get('lsr')
   afl = [gym,laundry,parking,heater,ac]
+  
+  
   
   #Exception checking
   lp = basic_info + addl + tyl +afl
@@ -308,21 +383,6 @@ def postnew():
     if i == '':
       return redirect('/searcherror')
     
-  #for i in [cap,l,k,be,ba]:
-    #if i != '' and check_int(i) == False:
-      #return redirect('searcherror')
-    
-  parking = request.form.get('parking').encode('ascii')
-  laundry = request.form.get('laundry').encode('ascii')
-  gym = request.form.get('gym').encode('ascii')
-  heater = request.form.get('heater').encode('ascii')
-  ac = request.form.get('AC').encode('ascii')
-  afl = [gym,laundry,parking,heater,ac]
-  
-  lp = basic_info + addl + tyl +afl
-  for i in lp:
-    if i == '':
-      return redirect('/searcherror')
   
   l = int(l)
   k = int(k)
@@ -337,21 +397,34 @@ def postnew():
   afd = {"gym":[gym,'j'],"laundry":[laundry,'k'],"parking":[parking,'l'],
          "heater":[heater,'m'],"ac":[ac,'n']}
   
-
+  #INSERT INTO LANDLORD
+  if lsr != None:
+    cmd0 = "Insert into landlord values (:U, :l)"
+  else:
+    cmd0 = "Insert into landlord values (:U)"
+  
+  try:
+    g.conn.execute(text(cmd0),{'U':username, 'l':lsr.encode('ascii')})
+  except:
+    pass
+  
+  #INSERT INTO LOCATION
   cmd1 = "Insert into location values (:b,:c,:d,:e)"
   try:
     g.conn.execute(text(cmd1),{'b': stno, 'c': stna, 'd':counties, 'e': zipcode})
   except:
     pass
   
+  #INSERT INTO APARTMENT_TYPE
   cmd2 = "INSERT into apartment_type values (:l,:k,:ba,:be)"
   #print "I'm here!"
   try:
     g.conn.execute(text(cmd2),{'l':l,'k':k,'ba':ba,'be':be})
-    print "I'm here!"
+    #print "I'm here!"
   except:
     pass
   
+  #insert into amenities and furnishings
   cmd3 = "INSERT into amenities_and_furnishings values (:j, :k, :l, :m, :n)"
   try:
     g.conn.execute(text(cmd3),{'j':gym,'k':laundry,'l':parking,'m': heater, 'n':ac})
@@ -359,82 +432,104 @@ def postnew():
     "print I'm at cmd3!"
     pass
   
-  ##print "I'm at cmd4!"
+  #Insert into apartment
   cmd4 = ("INSERT into apartment_owned_is_at_and_has_type values(:uidf, :aidf, "
           + ":areaf, :a, :capf, :sdf, :edf, :pf, :b, :c, :d, :e, :f, :g, :h, :i)")
   
+  #try:
   g.conn.execute(text(cmd4),{"uidf":username, "aidf":aid, "areaf": area,'a':aptno, "capf": cap,
-                            "sdf":sd, "edf":ed, "pf":price, 'b': stno, 'c': stna, 
-                            'd':counties, 'e': zipcode, 'f':l,'g':k,'h':ba,'i':be})
+                             "sdf":sd, "edf":ed, "pf":price, 'b': stno, 'c': stna, 
+                             'd':counties, 'e': zipcode, 'f':l,'g':k,'h':ba,'i':be})
+  #except:
+    #return render_template('searcherror2.html')  
   
-  #print "I'm at cmd5!"
-  #cmd5("INSERT into has values (:uidf, :aidf, :j, :k, :l, :m, :n)")
-  #g.conn.execute(text(cmd5), {"uidf":username, "aidf":aid, 'j':gym,'k':laundry,
-                              #'l':parking,'m': heater, 'n':ac})
+  #Isert into has table
+  cmd35 = "INSERT into has values (:u, :ai, :g, :l, :p, :h, :a)"
+  try:
+    g.conn.execute(text(cmd35),{'u':username, 'ai' :aid, 'g':gym,'l':laundry,'p':parking,'h': heater, 'a':ac})  
+  except:
+    pass 
   
-
   return redirect('/profile')
 
 @app.route('/interest', methods = ['POST'])
 def interest():
-  lid = request.form.get('lid')
-  print lid
-  aid = str(request.form.get('aid'))
-  tid = str(request.form.get('tid'))
+  lid = request.form.get('lid').encode('ascii')
+  aid = request.form.get('aid').encode('ascii')
+  tid = username
   ls = str(request.form.get('lifestyle'))
   if (lid == '' or aid == '' or tid == ''):
     return redirect('/searcherror')
   
   cmd1 = "INSERT into potential_tenant values(:ut,:ls)"
   try:
-    g.conn.execute(text(cmd1),{"ut": tid, "ls" : ls})
+    g.conn.execute(text(cmd1),{"ut": tid, "ls" : ls}) 
   except:
-    pass
+    cmd0 = "Select life_style from potential_tenant where uid = :u"
+    cur0 = g.conn.execute(text(cmd0),{'u':tid})
+    res = []
+    for result in cur0:
+      res = result[0]
+    if res == None:
+      g.conn.execute(text("update potential_tenant set life_style = "
+                     + ":l where uid = :ui"), {'l':ls, 'ui' :tid});
+    else:
+      pass
+  
   cmd2 = "INSERT into has_interest_in values(:ut,:ul, :a)"
   
-  cur = g.conn.execute(text(cmd2),{"ut": tid, "a": aid, "ul": lid})
+  try:
+    cur = g.conn.execute(text(cmd2),{"ut": tid, "a": aid, "ul": lid})
+  except:
+    return render_template("/nosuchcombo.html")
+  
   return redirect('/profile')
 
-@app.route('/vd',methods=['POST'])
-def vd():
-  lid = request.form.get('lid')
-  try:
-    cmd = "Select uid,birthyear,occupation,gender,emailaddress from users where uid = :l"
-  except:
-    return redirect('/searchresult')
+@app.route('/getlandlord',methods=['POST'])
+def getlandlord():
+  lid = request.form.get('lid').encode("ascii")
+  
+  cmd = ("Select u.uid, birthyear, occupation, gender, emailaddress,"
+          +" l.lrating, l.life_style_required from users as u, landlord as "
+          +"l where l.uid = u.uid and u.uid = :l")
   
   cur = g.conn.execute(text(cmd),{'l':lid})
-  global users
-  for record in cur:
-    if record not in users:
-      users.append(record)
-  cur.close()  
-  context = dict(bla = users)
+  uid,birthyear,occupation,gender,emailaddress,rating,lifestyle = get_user(cur)
+  context = dict(uid = uid, birthyear = birthyear, occupation = occupation,
+                 gender = gender, emailaddress = emailaddress, rating = rating,
+                 lifestylerequired = lifestyle)
+  
   return render_template("vp.html",**context)
   
-@app.route('/vp',methods=['POST'])
-def vp():
-  tid = request.form.get('tid')
-  try:
-    cmd = "Select uid,birthyear,occupation,gender,emailaddress from users where uid = :t"
-  except:
-    return redirect('/searchresult')
+@app.route('/delete',methods=['POST'])
+def delete():
+  aid = request.form['aid'].encode('ascii')
+  if aid == '':
+    return redirect ('/searcherror')
   
-  cur = g.conn.execute(text(cmd),{'t':tid})
+  cmd0 = ("Select Count(uid) from has as B where B.aid = :aidf and B.uid = :u")
+  cur1 = g.conn.execute(text(cmd0),{'aidf':aid, 'u':username})
+  result = []
+  for res in cur1:
+    count = res[0]
+    if count == 0:
+      return render_template("nosuchcombo.html")
+
+  cmd1 = ("DELETE from has as B where B.aid = :aidf and B.uid = :u")
+  g.conn.execute(text(cmd1),{'aidf':aid, 'u':username})
+  cmd2 = ("DELETE from apartment_owned_is_at_and_has_type as A where"
+          +" A.uid = :u and A.aid = :aidf")
   
-  global userss
-  for record in cur:
-    if record not in userss:
-      userss.append(record)
-  cur.close()  
-  context = dict(bla = userss)
-  return render_template("vp.html",**context)  
+  g.conn.execute(text(cmd2),{'u': username, 'aidf' :aid})
+  
+  return redirect ('/profile')  
 
-
+  
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    error = None
-    if request.method == 'POST':
+  session['logged_in'] = False
+  error = None
+  if request.method == 'POST':
       global u,p
       u = request.form.get('username')
       p = request.form.get('password')
@@ -442,7 +537,6 @@ def login():
       cur = g.conn.execute(text(cmd),{'u1':u})
       for result in cur:
         count = result[0]
-      #cur.close()
       if count == 0:
             error = 'Invalid username!'
       elif count > 0:
@@ -459,9 +553,17 @@ def login():
           #print "Im here"
           apt.append( "You are logged in!")
           return redirect('/')
-    return render_template('login.html', error=error)
+      return render_template('login.html', error=error)
 
-
+@app.route('/logout', methods=['POST'])
+def logout():
+  global u,p
+  u = ' '
+  p = ' '
+  session['logged_in'] = False
+  global apt
+  apt = []
+  return render_template("index.html")
 
 if __name__ == "__main__":
   import click
