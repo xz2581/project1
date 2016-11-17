@@ -21,7 +21,7 @@ from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, Response, flash,url_for, session
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
-app = Flask(__name__, template_folder=templ_dir)
+app = Flask(__name__, template_folder=tmpl_dir)
 app.config['DEBUG'] = True
 app.config['SESSION_TYPE'] = 'filesystem'
 app.secret_key = 'super secret key'
